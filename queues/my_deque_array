@@ -1,0 +1,114 @@
+/* *****************************************************************************
+ *  Name: Oxana Melnikova
+ *  Date:
+ *  Description:
+ **************************************************************************** */
+
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class Deque<Item> implements Iterable<Item> {
+    // construct an empty deque
+    private int first, last;
+    private Item[] a;
+
+    public Deque() {
+        a = (Item[]) new Object[2];
+        first = 0;
+        last = 0;
+    }
+
+    // is the deque empty?
+    public boolean isEmpty() {
+        return (last - first == 0);
+    }
+
+    private void resize(int capacity) {
+        Item[] copy = (Item[]) new Object[capacity];
+        int ind = (last + first) / 2;
+        for (int i = first; i < last; i++) {
+            copy[capacity / 2 - ind + i] = a[i];
+        }
+        a = copy;
+        first = capacity / 2 - ind + first;
+        last = capacity / 2 - ind + last;
+    }
+
+    // return the number of items on the deque
+    public int size() {
+        return last - first;
+    }
+
+    public void addFirst(Item item)          // add the item to the front
+    {
+        if (first == 0) {
+            resize(2 * a.length);
+        }
+        a[first - 1] = item;
+        first = first - 1;
+    }
+
+    public void addLast(Item item)           // add the item to the end
+    {
+        if (last == a.length) {
+            resize(2 * a.length);
+        }
+        a[last + 1] = item;
+        last = last + 1;
+    }
+
+    public Item removeFirst()                // remove and return the item from the front
+    {
+        Item item = a[first];
+        a[first] = null;
+        first = first + 1;
+        if (last - first > 0 && last - first == a.length / 4) resize(a.length / 2);
+        return item;
+    }
+
+    public Item removeLast()                 // remove and return the item from the end
+    {
+        Item item = a[last];
+        a[last] = null;
+        last = last - 1;
+        if (last - first > 0 && last - first == a.length / 4) resize(a.length / 2);
+        return item;
+    }
+
+    public Iterator<Item> iterator()         // return an iterator over items in order from front to end
+    {
+        return new ArrayIterator();
+    }
+
+    // ArrayIterator
+    private class ArrayIterator implements Iterator<Item> {
+        private int i;
+
+        public ArrayIterator() {
+            i = first;
+        }
+
+        public boolean hasNext() {
+            return (i >= first) && (i <= last);
+        }
+
+        public Item next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return a[i++];
+        }
+    }
+
+    public static void main(String[] args)   // unit testing (optional)
+    {
+        Deque<String> deque = new Deque<String>();
+        while (!StdIn.isEmpty()) {
+            String item = StdIn.readString();
+            if (!item.equals("-")) deque.addFirst(item);
+            else if (!deque.isEmpty()) StdOut.print(deque.removeFirst() + " ");
+        }
+        StdOut.println("(" + deque.size() + " left on stack)");
+    }
+}
