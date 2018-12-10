@@ -18,23 +18,26 @@ public class Solver {
         private final int moves;
         private final Board node;
         private final Move predsessor;
+        private final int manhattan;
 
 
         public Move(Board node) {
             moves = 0;
             predsessor = null;
             this.node = node;
+            manhattan = node.manhattan();
         }
 
         public Move(Board node, Move pr) {
             moves = pr.moves + 1;
             predsessor = pr;
             this.node = node;
+            manhattan = node.manhattan();
         }
 
         public int compareTo(Move that) {
-            if (this.node.equals(that.node)) return 0;
-            return (this.node.manhattan() - that.node.manhattan()) + (this.moves - that.moves);
+            // if (this.node.equals(that.node)) return 0;
+            return (this.manhattan - that.manhattan) + (this.moves - that.moves);
         }
 
     }
@@ -62,6 +65,7 @@ public class Solver {
             result = true;
             lastmove = move;
             return;
+            
         }
 
         for (Board board : initial.neighbors()) {
@@ -78,14 +82,29 @@ public class Solver {
 
             for (Board board : move.node.neighbors()) {
                 if (move.predsessor != null) {
-                    if (!board.equals(move.predsessor.node)) pq.insert(new Move(board, move));
+                    boolean presence = false;
+                    for (Board neighbBoard : move.predsessor.node.neighbors()) {
+                        if (board.equals(neighbBoard)) {
+                            presence = true;
+                            break;
+                        }
+                    }
+                    if (!board.equals(move.predsessor.node) && !presence)
+                        pq.insert(new Move(board, move));
                 }
                 else pq.insert(new Move(board, move));
             }
 
             for (Board board : moveTwin.node.neighbors()) {
                 if (moveTwin.predsessor != null) {
-                    if (!board.equals(moveTwin.predsessor.node))
+                    boolean presence = false;
+                    for (Board neighbBoard : moveTwin.predsessor.node.neighbors()) {
+                        if (board.equals(neighbBoard)) {
+                            presence = true;
+                            break;
+                        }
+                    }
+                    if (!board.equals(moveTwin.predsessor.node) && !presence)
                         pqTwin.insert(new Move(board, moveTwin));
                 }
                 else pqTwin.insert(new Move(board, moveTwin));

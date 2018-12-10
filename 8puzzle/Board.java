@@ -10,7 +10,7 @@ public class Board {
     private int[][] bloks;
     private final int dimension;
     private int manhattan = -1;
-    private int hamming = -1;
+
 
     public Board(int[][] blocks)           // construct a board from an n-by-n array of blocks
     // (where blocks[i][j] = block in row i, column j)
@@ -20,7 +20,6 @@ public class Board {
 
         dimension = blocks.length;
         manhattan = manhattan();
-        hamming = hamming();
 
     }
 
@@ -32,7 +31,7 @@ public class Board {
 
     public int hamming()                   // number of blocks out of place
     {
-        if (hamming != -1) return hamming;
+
         int value;
         int sum = 0;
 
@@ -44,8 +43,8 @@ public class Board {
                 }
             }
         }
-        hamming = sum;
-        return hamming;
+
+        return sum;
     }
 
     public int manhattan()                 // sum of Manhattan distances between blocks and goal
@@ -53,6 +52,7 @@ public class Board {
         int validI, validJ;
         int sum = 0;
         if (manhattan != -1) return manhattan;
+
 
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
@@ -64,7 +64,7 @@ public class Board {
             }
         }
         manhattan = sum;
-        return manhattan;
+        return sum;
     }
 
     public boolean isGoal()                // is this board the goal board?
